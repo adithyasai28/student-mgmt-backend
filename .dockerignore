@@ -1,6 +1,13 @@
 node_modules
 npm-debug.log
-*.md
+.DS_Store
 .git
 .gitignore
-db/*.db      # optional: exclude DB files so container uses fresh DB
+db/*.db   # optional (skip DB; let container create new DB)
+test
+jenkins
+.github
+terraform
+kubernetes
+prometheus
+docker-compose.monitoring.yaml
