@@ -1,0 +1,36 @@
+pipeline {
+  agent any
+  environment {
+    DOCKERHUB = credentials('dockerhub-creds') // configure in Jenkins credentials
+    REPO = 'yourusername/student-mgmt-backend'
+  }
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
+    stage('Install & Test') {
+      steps {
+        sh 'npm ci'
+        sh 'npm test'
+      }
+    }
+    stage('Build Docker Image') {
+      steps {
+        sh "docker build -t ${REPO}:$BUILD_NUMBER ."
+      }
+    }
+    stage('Push Docker Image') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USR', passwordVariable: 'PWD')]) {
+          sh "echo $PWD | docker login -u $USR --password-stdin"
+          sh "docker tag ${REPO}:$BUILD_NUMBER ${REPO}:latest"
+          sh "docker push ${REPO}:latest"
+          sh "docker push ${REPO}:$BUILD_NUMBER"
+        }
+      }
+    }
+  }
+  post {
+    always { archiveArtifacts artifacts: 'logs/**', allowEmptyArchive: true }
+  }
+}

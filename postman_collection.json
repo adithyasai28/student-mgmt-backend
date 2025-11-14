@@ -1,0 +1,45 @@
+{
+    "info": {
+      "name": "Student Management API",
+      "_postman_id": "student-mgmt-sample",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Register",
+        "request": {
+          "method": "POST",
+          "header": [{"key":"Content-Type","value":"application/json"}],
+          "body": {"mode":"raw","raw":"{\"username\":\"demo\",\"password\":\"demo\"}"},
+          "url": {"raw":"http://localhost:3000/auth/register","host":["http://localhost:3000"], "path":["auth","register"]}
+        }
+      },
+      {
+        "name": "Login",
+        "request": {
+          "method": "POST",
+          "header": [{"key":"Content-Type","value":"application/json"}],
+          "body": {"mode":"raw","raw":"{\"username\":\"demo\",\"password\":\"demo\"}"},
+          "url": {"raw":"http://localhost:3000/auth/login","host":["http://localhost:3000"], "path":["auth","login"]}
+        }
+      },
+      {
+        "name": "Create Student",
+        "request": {
+          "method": "POST",
+          "header": [{"key":"Content-Type","value":"application/json"}, {"key":"Authorization","value":"Bearer {{token}}"}],
+          "body": {"mode":"raw","raw":"{\"name\":\"Jane\",\"age\":20}"},
+          "url": {"raw":"http://localhost:3000/students","host":["http://localhost:3000"], "path":["students"]}
+        }
+      },
+      {
+        "name": "Get Students",
+        "request": {
+          "method": "GET",
+          "header": [{"key":"Authorization","value":"Bearer {{token}}"}],
+          "url": {"raw":"http://localhost:3000/students","host":["http://localhost:3000"], "path":["students"]}
+        }
+      }
+    ]
+  }
+  
