@@ -1,5 +1,5 @@
 const Datastore = require('nedb-promises');
-const { nanoid } = require('nanoid');
+const { randomUUID } = require('crypto');
 
 const studentsDB = Datastore.create({
   filename: './db/students.db',
@@ -19,11 +19,12 @@ exports.getById = async (req, res) => {
 
 exports.create = async (req, res) => {
   const { name, age, course, email } = req.body;
+
   if (!name)
     return res.status(400).json({ error: "name required" });
 
   const student = {
-    id: nanoid(),
+    id: randomUUID(),
     name,
     age,
     course,
@@ -49,6 +50,7 @@ exports.update = async (req, res) => {
 
 exports.remove = async (req, res) => {
   const deleted = await studentsDB.remove({ id: req.params.id });
+
   if (deleted === 0)
     return res.status(404).json({ error: "not found" });
 

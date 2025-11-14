@@ -6,6 +6,11 @@ const studentRoutes = require('./routes/students');
 const metrics = require('./utils/metrics');
 
 const app = express();
+
+app.get("/", (req, res) => {
+  res.send("Student Management Backend is running 🚀");
+});
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use(metrics.requestCounter);

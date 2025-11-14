@@ -1,36 +1,46 @@
 pipeline {
-  agent any
-  environment {
-    DOCKERHUB = credentials('dockerhub-creds') // configure in Jenkins credentials
-    REPO = 'yourusername/student-mgmt-backend'
-  }
-  stages {
-    stage('Checkout') {
-      steps { checkout scm }
+    agent any
+
+    tools {
+        nodejs "node18"
     }
-    stage('Install & Test') {
-      steps {
-        sh 'npm ci'
-        sh 'npm test'
-      }
-    }
-    stage('Build Docker Image') {
-      steps {
-        sh "docker build -t ${REPO}:$BUILD_NUMBER ."
-      }
-    }
-    stage('Push Docker Image') {
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USR', passwordVariable: 'PWD')]) {
-          sh "echo $PWD | docker login -u $USR --password-stdin"
-          sh "docker tag ${REPO}:$BUILD_NUMBER ${REPO}:latest"
-          sh "docker push ${REPO}:latest"
-          sh "docker push ${REPO}:$BUILD_NUMBER"
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git credentialsId: 'github-creds',
+                    url: 'https://github.com/adithyasai28/student-mgmt-backend.git',
+                    branch: 'main'
+            }
         }
-      }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'npm test'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                    docker build -t student-mgmt-backend:jenkins .
+                '''
+            }
+        }
     }
-  }
-  post {
-    always { archiveArtifacts artifacts: 'logs/**', allowEmptyArchive: true }
-  }
+
+    post {
+        success {
+            echo "Build Successful 🎉"
+        }
+        failure {
+            echo "Build Failed ❌"
+        }
+    }
 }

@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Datastore = require('nedb-promises');
-const { nanoid } = require('nanoid');
+const { randomUUID } = require('crypto');
 
 const SECRET = process.env.JWT_SECRET || "replace_this_secret";
 
@@ -21,7 +21,7 @@ exports.register = async (req, res) => {
     return res.status(400).json({ error: "User already exists" });
 
   const hashed = await bcrypt.hash(password, 10);
-  const user = { id: nanoid(), username, password: hashed };
+  const user = { id: randomUUID(), username, password: hashed };
 
   await usersDB.insert(user);
 
